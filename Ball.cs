@@ -105,7 +105,11 @@ namespace PingPongGame
             return Check;
         }
 
-        public bool Check { get => check; set => check = value; }                      //Khi có 1 hàm nào đó gọi hàm này, giá trị trả về chính là biến check, nếu có thay đổi thì check cũng sẽ thay đổi
+        public bool Check
+        {
+           get { return check; }
+           set { check = value; }
+        }                      //Khi có 1 hàm nào đó gọi hàm này, giá trị trả về chính là biến check, nếu có thay đổi thì check cũng sẽ thay đổi
 
         public void ResetBall()
         {                                                                               //Khi hàm này được gọi, ta sẽ random ball theo phương dọc và ngang
