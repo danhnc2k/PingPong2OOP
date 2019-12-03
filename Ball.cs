@@ -39,13 +39,14 @@ namespace PingPongGame
         {
             ball.Location = new Point(ball.Location.X + xSpeed, ball.Location.Y + ySpeed);          //Cho Ball di chuyển theo tốc độ(thay đổi vị trí Ball) bằng bước nhảy 
 
+            
             if(ball.Left <= playground.Left || ball.Right >= playground.Right)                      //Nếu như ball chạm viền trái hoặc viền phải màn hình thì cho tốc độ theo phương ngang ngược lại
             {
                 xSpeed *= -1;
             }
 
-            if(ball.Bottom >= Player2.racket.Top && ball.Bottom <= Player2.racket.Bottom            //Nếu như ball chạm vào thanh đỡ dưới, ta cho tốc độ theo phương ngang và dọc ngược lại đồng thời tăng tốc hướng dọc thêm 1
-                && ball.Left > Player2.racket.Left && ball.Right < Player2.racket.Right)    
+            if(ball.Bottom < Player2.racket.Bottom && ball.Bottom+ySpeed > Player2.racket.Top            //Nếu như ball chạm vào thanh đỡ dưới, ta cho tốc độ theo phương ngang và dọc ngược lại đồng thời tăng tốc hướng dọc thêm 1
+                && ball.Location.X > Player2.racket.Left && ball.Location.X < Player2.racket.Right)    
             {
                 int temp = Math.Abs(ySpeed) + 1;            //cho tốc độ dọc tăng 1 trước, sau đó chuyển tốc độ là ngược lại(nhân thêm -1)
                 ySpeed = -temp;
@@ -60,8 +61,8 @@ namespace PingPongGame
                 }
             }
 
-            if(ball.Top <= Player1.racket.Bottom && ball.Top >= Player1.racket.Top                  //Tương tự như trên đối với TH thanh đỡ trên
-                && ball.Left > Player1.racket.Left && ball.Right < Player1.racket.Right)
+            if(ball.Top > Player1.racket.Top && ball.Top+ySpeed < Player1.racket.Bottom                  //Tương tự như trên đối với TH thanh đỡ trên
+                && ball.Location.X > Player1.racket.Left && ball.Location.X < Player1.racket.Right)
             {
                 int temp = Math.Abs(ySpeed) + 1;
                 ySpeed = temp;
@@ -105,11 +106,7 @@ namespace PingPongGame
             return Check;
         }
 
-        public bool Check
-        {
-           get { return check; }
-           set { check = value; }
-        }                      //Khi có 1 hàm nào đó gọi hàm này, giá trị trả về chính là biến check, nếu có thay đổi thì check cũng sẽ thay đổi
+        public bool Check { get { return check; } set { check = value; } }                      //Khi có 1 hàm nào đó gọi hàm này, giá trị trả về chính là biến check, nếu có thay đổi thì check cũng sẽ thay đổi
 
         public void ResetBall()
         {                                                                               //Khi hàm này được gọi, ta sẽ random ball theo phương dọc và ngang
