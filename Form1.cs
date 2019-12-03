@@ -13,7 +13,7 @@ namespace PingPongGame
     public partial class Form1 : Form
     {
         public bool HasEnded = false;//biến kiểm tra xem game đã kết thúc chưa
-
+       
         Player player1, player2;//class Player tượng trưng cho thanh đỡ
         Ball CircleThing;//class Ball tượng trưng cho quả bóng
         public Form1()
@@ -46,7 +46,7 @@ namespace PingPongGame
             CircleThing.ProcessMove();              //Tương tự như đối với đối tượng(class) Player
 
             HasEnded = CircleThing.HasChecked();    //các hàm trên hoạt động ứng với mỗi 1 tick(thời gian chạy chương trình) cho nên khi chạy các hàm xem game đã kết thúc chưa
-            if(HasEnded)                            //Nếu game kết thúc thì biến timer1 sẽ dừng hoạt động các biến này(bên hàm Ball.PocessMove() sẽ kiểm tra
+            if (HasEnded == true)                            //Nếu game kết thúc thì biến timer1 sẽ dừng hoạt động các biến này(bên hàm Ball.PocessMove() sẽ kiểm tra
             {
                 if(player1.isThePlayerWon())//Kiểm tra xem người chơi 1 có thỏa điều kiện thắng hay ko
                 {
@@ -74,7 +74,7 @@ namespace PingPongGame
             switch(e.KeyCode)
             {
                 case Keys.F2:                                                                       //F2 là cho biến timer1 ngưng hoặc chạy tiếp sau khi ngưng hay nói cách khác là Pause hoặc Resume
-                    if(timer1.Enabled && checker == true)                                           //nếu timer1 không dừng thì ta cho nó dừng và cho hiện bảng lệnh ban đầu
+                    if(timer1.Enabled == true && checker == true)                                           //nếu timer1 không dừng thì ta cho nó dừng và cho hiện bảng lệnh ban đầu
                     {
                         timer1.Enabled = false;                                                     //dừng hoạt động các biến
                         Rules.Visible = true;                                                       //hiên bảng lệnh
@@ -85,23 +85,32 @@ namespace PingPongGame
                         Rules.Visible = false;                                                      //Ẩn bảng lệnh đi
                     }
                     break;
-                case Keys.F1:                                                                       //F1 là cho chương trình chạy giống như lúc bắt đầu chương trình hay nói cách khác là Restart
-                    if(checker == true)
+                case Keys.F1:
+                    //F1 là cho chương trình chạy giống như lúc bắt đầu chương trình hay nói cách khác là Restart
+                    if (checker == true && HasEnded == true) 
                     {
-                        if(timer1.Enabled == false)                                                 //Tương tự như hàm trên, ta tắt bảng lệnh và cho game chạy
+                    
+                        if (timer1.Enabled == false)                                                 //Tương tự như hàm trên, ta tắt bảng lệnh và cho game chạy
                         {
                             timer1.Enabled = true;
                             Rules.Visible = false;
+                           
                         }
                         player1.scored = 0;                                                         //score là 1 hàm ở trong class player có tác dụng xem player đang trỏ tới có điểm là bao nhiêu và thay đổi điểm đó bằng thao tác toán tử bình thường
                         player2.scored = 0;
-                        HasEnded = false;                                                           //Đương nhiên là phải cho biến kiểm tra game kết thúc chưa về lại false(kể cả khi nó đang false, để tránh xảy ra lỗi)
+                        
                         PlayerTopAnouncement.Visible = PlayerBotAnouncement.Visible = false;        //Giả sử game đã kết thúc thì ta cho 2 bảng thông báo này ẩn đi
                         CircleThing.ResetBall();                                                    //hàm ResetBall() nằm ở trong class Ball có công việc cho vị trí của ball về lại vị trí ở giữa với các biến chạy mới
+                        HasEnded = false;                                                          //Đương nhiên là phải cho biến kiểm tra game kết thúc chưa về lại false(kể cả khi nó đang false, để tránh xảy ra lỗi)
+                        CircleThing.Check = false;
                     }
                     break;
-                case Keys.Escape:                                                                   //nút Esc là để thoát chương trình khi ta gán nút này thực hiện lệnh Close()
-                    Close();
+                case Keys.Escape://nút Esc là để thoát chương trình khi ta gán nút này thực hiện lệnh Close()
+                    if (HasEnded == true)
+                    {
+                        Close();
+                    }
+                  
                     break;
                 case Keys.A:                                                                        //isPressLeft và isRightPress nằm ở trong hàm Player, A và D dành cho người chơi 1, mũi tên qua trái và mũi tên qua phải dành cho người chơi 2
                     player1.isLeftPress = checker;
