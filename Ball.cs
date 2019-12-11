@@ -10,68 +10,62 @@ namespace PingPongGame
 {
     public class Ball
     {
-        Timer timer1;
-        Form form;
-        public PictureBox ball, ballModel;             //4 biến ở đây dùng để nhận các thông tin đưa vào class Ball
+        public PictureBox ball;             //4 biến ở đây dùng để nhận các thông tin đưa vào class Ball
         private Panel playground;
         private Player Player1, Player2;
         private Timer tick;
+        private List<Brick> wall;
 
         Random rand = new Random();
         private bool check = false;
 
-        int xSpeed = 3;         //Mặc định tốc độ ban đầu theo phương ngang là 3 và phương dọc là 4
-        int ySpeed = 4;
+        public int xSpeed = 3;         //Mặc định tốc độ ban đầu theo phương ngang là 3 và phương dọc là 4
+        public int ySpeed = 4;
+
+
 
         private int ballx, bally;
 
-        public Ball(Form form, PictureBox aballModel, Panel playground, Player play1, Player play2, int BallX, int BallY, Timer tock)        //Khi tạo new Ball thì nơi đây giống như hàm khởi tạo của nó
+        public Ball(List<Brick> Wall,PictureBox ball, Panel playground, Player play1, Player play2, int BallX, int BallY, Timer tock)        //Khi tạo new Ball thì nơi đây giống như hàm khởi tạo của nó
         {
-            //this.form = form;
-            //ballModel = aballModel;
-            this.ball = aballModel;                                   //Gán tuần tự các biến đưa vào từ hàm gọi Ball
-            //this.ball.Image = aballModel.Image;
-            //form.Controls.Add(ball);
+            this.ball = ball;                                   //Gán tuần tự các biến đưa vào từ hàm gọi Ball
             this.playground = playground;
             Player1 = play1;
             Player2 = play2;
             ballx = BallX;
             bally = BallY;
             tick = tock;
+            wall = Wall;
             this.ball.Location = new Point(BallX, BallY);       //Cho Ball ra giữa màn hình từ các con số đã định nghĩa ở hàm SetGame()
         }
 
-        internal void ProcessMove(int BallXp,int BallYp)
+        internal void ProcessMove()
         {
             ball.Location = new Point(ball.Location.X + xSpeed, ball.Location.Y + ySpeed);          //Cho Ball di chuyển theo tốc độ(thay đổi vị trí Ball) bằng bước nhảy 
 
-
-            if (ball.Left <= playground.Left || ball.Right >= playground.Right)                      //Nếu như ball chạm viền trái hoặc viền phải màn hình thì cho tốc độ theo phương ngang ngược lại
+            
+            if(ball.Left <= playground.Left || ball.Right >= playground.Right)                      //Nếu như ball chạm viền trái hoặc viền phải màn hình thì cho tốc độ theo phương ngang ngược lại
             {
                 xSpeed *= -1;
             }
 
-            if (ball.Bottom < Player2.racket.Bottom && ball.Bottom + ySpeed > Player2.racket.Top            //Nếu như ball chạm vào thanh đỡ dưới, ta cho tốc độ theo phương ngang và dọc ngược lại đồng thời tăng tốc hướng dọc thêm 1
-                && ball.Location.X > Player2.racket.Left && ball.Location.X < Player2.racket.Right)
+            if(ball.Bottom < Player2.racket.Bottom && ball.Bottom+ySpeed > Player2.racket.Top            //Nếu như ball chạm vào thanh đỡ dưới, ta cho tốc độ theo phương ngang và dọc ngược lại đồng thời tăng tốc hướng dọc thêm 1
+                && ball.Location.X > Player2.racket.Left && ball.Location.X < Player2.racket.Right)    
             {
                 int temp = Math.Abs(ySpeed) + 1;            //cho tốc độ dọc tăng 1 trước, sau đó chuyển tốc độ là ngược lại(nhân thêm -1)
                 ySpeed = -temp;
                 temp = Math.Abs(xSpeed) + 1;
-                if (xSpeed < 0)
+                if(xSpeed < 0)
                 {
                     xSpeed = -temp;
-                    BallXp = ball.Location.X;
-                    BallYp = ball.Location.Y;
                 }
                 else
                 {
                     xSpeed = temp;
-                    BallXp = ball.Location.X;
-                    BallYp = ball.Location.Y;
                 }
             }
 
-            if (ball.Top > Player1.racket.Top && ball.Top + ySpeed < Player1.racket.Bottom                  //Tương tự như trên đối với TH thanh đỡ trên
+            if(ball.Top > Player1.racket.Top && ball.Top+ySpeed < Player1.racket.Bottom                  //Tương tự như trên đối với TH thanh đỡ trên
                 && ball.Location.X > Player1.racket.Left && ball.Location.X < Player1.racket.Right)
             {
                 int temp = Math.Abs(ySpeed) + 1;
@@ -80,28 +74,25 @@ namespace PingPongGame
                 if (xSpeed < 0)
                 {
                     xSpeed = -temp;
-                    BallXp = ball.Location.X;
-                    BallYp = ball.Location.Y;
                 }
                 else
                 {
                     xSpeed = temp;
-                    BallXp = ball.Location.X;
-                    BallYp = ball.Location.Y;
                 }
             }
-
-            if (ball.Bottom >= playground.Bottom || ball.Top <= playground.Top)                      //Nếu ball chạm vào viền trên hoặc viền dưới màn hình, tức là có 1 người chơi đã ăn 1 điểm
+             
+            if(ball.Bottom >= playground.Bottom || ball.Top <= playground.Top)                      //Nếu ball chạm vào viền trên hoặc viền dưới màn hình, tức là có 1 người chơi đã ăn 1 điểm
             {
-                if (ball.Bottom >= playground.Bottom)                                                //Nếu chạm dưới thì người chơi trên ăn điểm, ta set score của người chơi trên tăng thêm 1
+                
+                if(ball.Bottom >= playground.Bottom)                                                //Nếu chạm dưới thì người chơi trên ăn điểm, ta set score của người chơi trên tăng thêm 1
                 {
                     Player1.scored++;                                                   //score và isThePlayerWon() được định nghĩa ở class Player
-                    new Ball(form, ballModel, playground,Player1,Player2, 381, 281, timer1);
-                    if (Player1.isThePlayerWon())                                        //Nếu người chơi đã thắng, tức hàm isThePlayerWon() trả về true thì ta cho thời gian dừng lại, đồng thời biến Check sẽ được gọi bên Form1(HasEnded) sẽ gán true
+                    if(Player1.isThePlayerWon())                                        //Nếu người chơi đã thắng, tức hàm isThePlayerWon() trả về true thì ta cho thời gian dừng lại, đồng thời biến Check sẽ được gọi bên Form1(HasEnded) sẽ gán true
                     {                                                                   //Tức là không thể resume được trò chơi, buộc phải thoát hoặc chơi lại
                         Check = true;
                         tick.Enabled = false;
                     }
+                   
                 }
                 else                                                                    //Tương tự cho trường hợp người chơi dưới ăn điểm
                 {
@@ -114,6 +105,8 @@ namespace PingPongGame
                 }
                 ResetBall();                                                            //ResetBall() được định nghĩa ở dưới
             }
+            ///
+            
         }
 
         public bool HasChecked()
